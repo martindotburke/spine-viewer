@@ -1,20 +1,65 @@
 import React from 'react'
 import Dropzone from 'react-dropzone'
 
-export class UploadComponent extends React.Component {
-
-    
-
+export class UploadComponent extends React.Component 
+{
     constructor (props)
     {   
         super(props);
 
-        this.onDrop = (files) => {
-            this.setState({files})
-            };
+        this.onDrop = (files) => 
+        {
+            var name = null;
+            for (var f in files)
+            {
+              let n = files[f].name.split('.')[0];
+              if (name !== null && name !== n)
+              {
+                //error
+                break;
+              }
+              name = n;
+            }
+
+            var spineImage = false;
+            var spineAtlas = false;
+            var spineJson = false;
+
+            if (name!==null)
+            {
+              for (f in files)
+              {
+                var type = files[f].name.split('.')[1];
+                switch (type)
+                {
+                  case "json":
+                    spineJson = true;
+                    break;
+
+                  case "png":
+                  case "jpg":
+                    spineImage = true;
+                    break;
+
+                  case "atlas":
+                    spineAtlas = true;
+                    break;
+
+                  default:
+                    break;
+                }
+              }
+            }
+
+            this.setState({
+              "files": files, 
+              "valid": (name !== null) && (spineAtlas === true) && (spineImage === true) && (spineJson === true)
+            });
+          }
 
         this.state = {
-            files: []
+            files: [],
+            valid: false
         };
     }
     render() {
@@ -30,10 +75,11 @@ export class UploadComponent extends React.Component {
               <section className="container">
                 <div {...getRootProps({className: 'dropzone'})}>
                   <input {...getInputProps()} />
-                  <p>Drag 'n' drop some files here, or click to select files</p>
+                  <img src="./resources/add-file-icon-3.jpg" alt=""/>
+                  <p>xDrag 'n' drop some files here, or click to select files</p>
                 </div>
                 <aside>
-                  <h4>Files</h4>
+                  <h4 style={{color:(this.state.valid === false) ? "#F00" : "#0F0"}}>Files {this.state.valid}</h4>
                   <ul>{files}</ul>
                 </aside>
               </section>
