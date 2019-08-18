@@ -51,15 +51,22 @@ export class UploadComponent extends React.Component
               }
             }
 
-            this.setState({
-              "files": files, 
-              "valid": (name !== null) && (spineAtlas === true) && (spineImage === true) && (spineJson === true)
-            });
+            var isValid = (name !== null) && (spineAtlas === true) && (spineImage === true) && (spineJson === true);
+            
+            if (isValid)
+            {
+              this.props.onFilesUploaded (files);
+            }
+            else
+            {
+              this.setState({
+                "files": files, 
+              });
+            }
           }
 
         this.state = {
-            files: [],
-            valid: false
+            files: []
         };
     }
     render() {
@@ -76,10 +83,10 @@ export class UploadComponent extends React.Component
                 <div {...getRootProps({className: 'dropzone'})}>
                   <input {...getInputProps()} />
                   <img src="./resources/add-file-icon-3.jpg" alt=""/>
-                  <p>xDrag 'n' drop some files here, or click to select files</p>
+                  <p>Drag 'n' drop some files here, or click to select files</p>
                 </div>
                 <aside>
-                  <h4 style={{color:(this.state.valid === false) ? "#F00" : "#0F0"}}>Files {this.state.valid}</h4>
+                  <h4 style={{color:(this.state.files.length > 0) ? "#F00" : "#FFF"}}>Files</h4>
                   <ul>{files}</ul>
                 </aside>
               </section>
